@@ -1,9 +1,9 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, Boolean, DateTime, CheckConstraint
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import declarative_base, declared_attr, sessionmaker
 
 from app.core.config import settings
+from sqlalchemy import Boolean, CheckConstraint, Column, DateTime, Integer
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+from sqlalchemy.orm import declarative_base, declared_attr, sessionmaker
 
 
 class PreBase:

@@ -1,18 +1,11 @@
-# app/api/meeting_room.py
-from fastapi import APIRouter, Depends
-from app.models.user import User
-
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.core.db import get_async_session
-from app.crud.donation import donation_crud
-from app.schemas.donations import (
-    DonationCreate,
-    DonationDB,
-    DonationAdminDB
-)
 from app.core.user import current_superuser, current_user
+from app.crud.donation import donation_crud
+from app.models.user import User
+from app.schemas.donations import DonationAdminDB, DonationCreate, DonationDB
 from app.services.investing_service import invest_in_projects
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
@@ -46,8 +39,7 @@ async def get_all_donations(
         session: AsyncSession = Depends(get_async_session),
 ) -> list[str]:
     """Получает список всех пожертвований."""
-    all_donations = await donation_crud.get_multi(session)
-    return all_donations
+    return await donation_crud.get_multi(session)
 
 
 @router.get(
@@ -59,7 +51,6 @@ async def get_my_donations(
         user: User = Depends(current_user)
 ) -> list[str]:
     """Получает список всех пожертвований для текущего пользователя."""
-    donations = await donation_crud.get_by_user(
+    return await donation_crud.get_by_user(
         session=session, user=user
     )
-    return donations

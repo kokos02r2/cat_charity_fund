@@ -1,25 +1,14 @@
-# app/api/meeting_room.py
-from fastapi import APIRouter, Depends
-
-from sqlalchemy.ext.asyncio import AsyncSession
-
+from app.api.validators import (check_closed_project, check_name_duplicate,
+                                check_new_full_amount, check_project_exists,
+                                check_project_invested_amount)
 from app.core.db import get_async_session
-from app.crud.charity_project import charity_project_crud
-from app.schemas.projects import (
-    CharityProjectCreate,
-    CharityProjectDB,
-    CharityProjectUpdate
-)
-from app.api.validators import (
-    check_name_duplicate,
-    check_project_exists,
-    check_project_invested_amount,
-    check_new_full_amount,
-    check_closed_project
-
-)
-from app.services.investing_service import invest_in_projects
 from app.core.user import current_superuser
+from app.crud.charity_project import charity_project_crud
+from app.schemas.projects import (CharityProjectCreate, CharityProjectDB,
+                                  CharityProjectUpdate)
+from app.services.investing_service import invest_in_projects
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 router = APIRouter()
 
@@ -49,8 +38,7 @@ async def create_new_project(
 async def get_all_charity_projects(
         session: AsyncSession = Depends(get_async_session),
 ):
-    all_projects = await charity_project_crud.get_multi(session)
-    return all_projects
+    return await charity_project_crud.get_multi(session)
 
 
 @router.patch(
@@ -71,10 +59,9 @@ async def partially_update_project(
         await check_name_duplicate(project_in.name, session)
     await check_closed_project(project_id, session)
     await check_new_full_amount(project, project_in.full_amount)
-    project = await charity_project_crud.update(
+    return await charity_project_crud.update(
         project, project_in, session
     )
-    return project
 
 
 @router.delete(
@@ -89,5 +76,4 @@ async def remove_project(
     """Только для суперюзеров."""
     project = await check_project_exists(project_id, session)
     project = await check_project_invested_amount(project_id, session)
-    project = await charity_project_crud.remove(project, session)
-    return project
+    return await charity_project_crud.remove(project, session)

@@ -1,6 +1,7 @@
 from datetime import datetime
-from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.crud.donation import donation_crud
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 async def invest_in_projects(session: AsyncSession, object):

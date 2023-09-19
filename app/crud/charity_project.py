@@ -1,10 +1,9 @@
 from typing import Optional
 
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from app.crud.base import CRUDBase
 from app.models.charity_project import CharityProject
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class CRUDCharityProject(CRUDBase):
@@ -19,8 +18,7 @@ class CRUDCharityProject(CRUDBase):
                 CharityProject.name == project
             )
         )
-        db_project_id = db_project_id.scalars().first()
-        return db_project_id
+        return db_project_id.scalars().first()
 
     async def get_project_invested_amount_by_project_id(
             self,
@@ -32,8 +30,7 @@ class CRUDCharityProject(CRUDBase):
                 CharityProject.id == project_id
             )
         )
-        db_project_invested_amount = db_project_invested_amount.scalars().first()
-        return db_project_invested_amount
+        return db_project_invested_amount.scalars().first()
 
     async def get_project_full_amount_by_project_id(
             self,
@@ -45,8 +42,7 @@ class CRUDCharityProject(CRUDBase):
                 CharityProject.id == project_id
             )
         )
-        db_project_full_amount = db_project_full_amount.scalars().first()
-        return db_project_full_amount
+        return db_project_full_amount.scalars().first()
 
 
 charity_project_crud = CRUDCharityProject(CharityProject)

@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, Text
-
 from app.core.db import CommonBase
+from sqlalchemy import Column, String, Text
 
 
 class CharityProject(CommonBase):

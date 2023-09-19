@@ -1,11 +1,15 @@
-from typing import Optional
 from datetime import datetime
-from pydantic import BaseModel, PositiveInt, Extra, Field
+from typing import Optional
+
+from pydantic import BaseModel, Extra, Field, PositiveInt
+
+MIN_LENGTH = 1
+MAX_LENGHT = 100
 
 
 class CharityBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=100)
-    description: str = Field(..., min_length=1)
+    name: str = Field(..., min_length=MIN_LENGTH, max_length=MAX_LENGHT)
+    description: str = Field(..., min_length=MIN_LENGTH)
     full_amount: PositiveInt
 
     class Config:
@@ -17,8 +21,8 @@ class CharityProjectCreate(CharityBase):
 
 
 class CharityProjectUpdate(CharityBase):
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    description: Optional[str] = Field(None, min_length=1)
+    name: Optional[str] = Field(None, min_length=MIN_LENGTH, max_length=MAX_LENGHT)
+    description: Optional[str] = Field(None, min_length=MIN_LENGTH)
     full_amount: Optional[PositiveInt]
 
 

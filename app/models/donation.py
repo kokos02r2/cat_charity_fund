@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey
 from app.core.db import CommonBase
+from sqlalchemy import Column, ForeignKey, Integer, Text
 
 
 class Donation(CommonBase):
