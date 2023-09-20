@@ -38,7 +38,12 @@ async def invest_in_projects(session: AsyncSession, object):
             return object
 
         balance_project, balance_donation = calculate_balances(project, donation)
-        project, donation = process_investment(project, donation, balance_project, balance_donation)
+        project, donation = process_investment(
+            project,
+            donation,
+            balance_project,
+            balance_donation
+        )
 
         session.add(project)
         session.add(donation)
