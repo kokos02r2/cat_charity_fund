@@ -1,7 +1,32 @@
 from datetime import datetime
 
-from app.crud.donation import donation_crud
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.crud.donation import donation_crud
+
+
+def calculate_balances(project, donation):
+    balance_project = project.full_amount - project.invested_amount
+    balance_donation = donation.full_amount - donation.invested_amount
+    return balance_project, balance_donation
+
+
+def process_investment(project, donation, balance_project, balance_donation):
+    if balance_project > balance_donation:
+        project.invested_amount += balance_donation
+        donation.invested_amount += balance_donation
+        donation.fully_invested = True
+        donation.close_date = datetime.utcnow()
+    elif balance_project <= balance_donation:
+        project.invested_amount += min(balance_project, balance_donation)
+        donation.invested_amount += min(balance_project, balance_donation)
+        project.fully_invested = True
+        project.close_date = datetime.utcnow()
+        if balance_project == balance_donation:
+            donation.fully_invested = True
+            donation.close_date = datetime.utcnow()
+
+    return project, donation
 
 
 async def invest_in_projects(session: AsyncSession, object):
@@ -12,22 +37,8 @@ async def invest_in_projects(session: AsyncSession, object):
             await session.refresh(object)
             return object
 
-        balance_project = project.full_amount - project.invested_amount
-        balance_donation = donation.full_amount - donation.invested_amount
-
-        if balance_project > balance_donation:
-            project.invested_amount += balance_donation
-            donation.invested_amount += balance_donation
-            donation.fully_invested = True
-            donation.close_date = datetime.utcnow()
-        elif balance_project <= balance_donation:  # Объединяем два условия
-            project.invested_amount += min(balance_project, balance_donation)
-            donation.invested_amount += min(balance_project, balance_donation)
-            project.fully_invested = True
-            project.close_date = datetime.utcnow()
-            if balance_project == balance_donation:
-                donation.fully_invested = True
-                donation.close_date = datetime.utcnow()
+        balance_project, balance_donation = calculate_balances(project, donation)
+        project, donation = process_investment(project, donation, balance_project, balance_donation)
 
         session.add(project)
         session.add(donation)
